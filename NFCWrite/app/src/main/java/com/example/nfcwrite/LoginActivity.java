@@ -1,6 +1,8 @@
 package com.example.nfcwrite;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 
@@ -8,12 +10,15 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etNombre, etPassword;
     private Button btnAceptar;
-    private String URL_BASE="";
+    private String URL_BASE="http://192.168.1.12:8000/";
     private String userCode="";
     String username, password;
     @Override
@@ -41,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         btnAceptar = this.findViewById(R.id.btnAceptar);
 
+        etNombre=findViewById(R.id.etNombre);
+        etPassword=findViewById(R.id.etPassword);
         btnAceptar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     public void userLogin() throws JSONException
@@ -77,8 +86,9 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+
         //TODO BIEN
-        arrayPeticion = new JsonObjectRequest(Request.Method.PUT, url, objDatos, new Response.Listener<JSONObject>() {
+        arrayPeticion = new JsonObjectRequest(Request.Method.POST, url, objDatos, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
@@ -87,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                     if(response != null){
                         Toast.makeText(getApplicationContext(), "Sesión iniciada", Toast.LENGTH_SHORT).show();
                         //TODO Guardar codigo recibido en userCode
-                        userCode=response.getString("user_code");
+                        userCode=response.getString("codigonfc");
                         initNfc();
                     } else {
                         Toast.makeText(getApplicationContext(), "Error al iniciar", Toast.LENGTH_SHORT).show();
@@ -102,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("joseba","No entra");
+                Log.d("joseba",""+error.getMessage());
                 Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
             }
         }) {

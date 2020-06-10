@@ -46,7 +46,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
         Intent intent = getIntent();
 
         String action = intent.getAction();
-
+        //TODO Esto se descomenta para hacerlo funcionar en el movil con nfc
+        /*
         if(action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)){
             Parcelable[] parcelables =
                     intent.getParcelableArrayExtra(
@@ -56,6 +57,8 @@ public class MainActivity extends Activity implements NfcAdapter.CreateNdefMessa
             NdefRecord NdefRecord_0 = inNdefRecords[0];
             String inMsg = new String(NdefRecord_0.getPayload());
         }
+
+ */
     }
 
     @Override
